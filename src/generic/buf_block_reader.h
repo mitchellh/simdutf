@@ -57,11 +57,11 @@ simdutf_really_inline size_t
 buf_block_reader<STEP_SIZE>::get_remainder(uint8_t *dst) const {
   if (len == idx) {
     return 0;
-  } // memcpy(dst, null, 0) will trigger an error with some sanitizers
-  std::memset(dst, 0x20,
+  } // simdutf::internal::memcpy(dst, null, 0) will trigger an error with some sanitizers
+  simdutf::internal::memset(dst, 0x20,
               STEP_SIZE); // std::memset STEP_SIZE because it is more efficient
                           // to write out 8 or 16 bytes at once.
-  std::memcpy(dst, buf + idx, len - idx);
+  simdutf::internal::memcpy(dst, buf + idx, len - idx);
   return len - idx;
 }
 

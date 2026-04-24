@@ -375,14 +375,14 @@ base64_compress(const simdutf::implementation &) {
   const auto data = vector_u8('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J',
                               'K', 'L', 'M', 'N', 'O', 'P');
   for (uint32_t mask = 0; mask <= 0xffff; mask++) {
-    memset(want, 0, 16);
-    memset(got, 0, 16);
+    simdutf::internal::memset(want, 0, 16);
+    simdutf::internal::memset(got, 0, 16);
     const uint16_t nmask = uint16_t(~mask);
 
     const int count = scalar_compress(data, nmask, want);
     compress(data, nmask, got);
 
-    if (memcmp(want, got, count) != 0) {
+    if (simdutf::internal::memcmp(want, got, count) != 0) {
       printf("want = ");
       for (int i = 0; i < count; i++) {
         putchar(want[i]);

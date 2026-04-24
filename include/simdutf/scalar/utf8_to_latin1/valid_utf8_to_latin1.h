@@ -25,9 +25,9 @@ simdutf_constexpr23 size_t convert_valid(InputPtr data, size_t len,
       if (pos + 16 <= len) { // if it is safe to read 16 more bytes, check that
                              // they are ascii
         uint64_t v1;
-        ::memcpy(&v1, data + pos, sizeof(uint64_t));
+        simdutf::internal::memcpy(&v1, data + pos, sizeof(uint64_t));
         uint64_t v2;
-        ::memcpy(&v2, data + pos + sizeof(uint64_t), sizeof(uint64_t));
+        simdutf::internal::memcpy(&v2, data + pos + sizeof(uint64_t), sizeof(uint64_t));
         uint64_t v{v1 |
                    v2}; // We are only interested in these bits: 1000 1000 1000
                         // 1000, so it makes sense to concatenate everything

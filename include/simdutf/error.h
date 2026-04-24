@@ -47,29 +47,33 @@ enum error_code {
 inline std::string_view error_to_string(error_code code) noexcept {
   switch (code) {
   case SUCCESS:
-    return "SUCCESS";
+    return std::string_view("SUCCESS", sizeof("SUCCESS") - 1);
   case HEADER_BITS:
-    return "HEADER_BITS";
+    return std::string_view("HEADER_BITS", sizeof("HEADER_BITS") - 1);
   case TOO_SHORT:
-    return "TOO_SHORT";
+    return std::string_view("TOO_SHORT", sizeof("TOO_SHORT") - 1);
   case TOO_LONG:
-    return "TOO_LONG";
+    return std::string_view("TOO_LONG", sizeof("TOO_LONG") - 1);
   case OVERLONG:
-    return "OVERLONG";
+    return std::string_view("OVERLONG", sizeof("OVERLONG") - 1);
   case TOO_LARGE:
-    return "TOO_LARGE";
+    return std::string_view("TOO_LARGE", sizeof("TOO_LARGE") - 1);
   case SURROGATE:
-    return "SURROGATE";
+    return std::string_view("SURROGATE", sizeof("SURROGATE") - 1);
   case INVALID_BASE64_CHARACTER:
-    return "INVALID_BASE64_CHARACTER";
+    return std::string_view("INVALID_BASE64_CHARACTER",
+                            sizeof("INVALID_BASE64_CHARACTER") - 1);
   case BASE64_INPUT_REMAINDER:
-    return "BASE64_INPUT_REMAINDER";
+    return std::string_view("BASE64_INPUT_REMAINDER",
+                            sizeof("BASE64_INPUT_REMAINDER") - 1);
   case BASE64_EXTRA_BITS:
-    return "BASE64_EXTRA_BITS";
+    return std::string_view("BASE64_EXTRA_BITS",
+                            sizeof("BASE64_EXTRA_BITS") - 1);
   case OUTPUT_BUFFER_TOO_SMALL:
-    return "OUTPUT_BUFFER_TOO_SMALL";
+    return std::string_view("OUTPUT_BUFFER_TOO_SMALL",
+                            sizeof("OUTPUT_BUFFER_TOO_SMALL") - 1);
   default:
-    return "OTHER";
+    return std::string_view("OTHER", sizeof("OTHER") - 1);
   }
 }
 

@@ -76,7 +76,7 @@ valid_utf8_to_fixed_length(const char *str, size_t len, OUTPUT *dwords) {
     int valid_count2;
     __m512i vec2 = expand_and_identify(lane2, lane3, valid_count2);
     uint32_t tmp1;
-    ::memcpy(&tmp1, ptr + 64, sizeof(tmp1));
+    simdutf::internal::memcpy(&tmp1, ptr + 64, sizeof(tmp1));
     const __m512i lane4 = _mm512_set1_epi32(tmp1);
     int valid_count3;
     __m512i vec3 = expand_and_identify(lane3, lane4, valid_count3);

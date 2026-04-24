@@ -1529,7 +1529,8 @@ detect_best_supported_implementation_on_first_use::set_best() const noexcept {
   SIMDUTF_PUSH_DISABLE_WARNINGS
   SIMDUTF_DISABLE_DEPRECATED_WARNING // Disable CRT_SECURE warning on MSVC:
                                      // manually verified this is safe
-      char *force_implementation_name = getenv("SIMDUTF_FORCE_IMPLEMENTATION");
+      const char *force_implementation_name =
+          simdutf::internal::getenv("SIMDUTF_FORCE_IMPLEMENTATION");
   SIMDUTF_POP_DISABLE_WARNINGS
 
   if (force_implementation_name) {

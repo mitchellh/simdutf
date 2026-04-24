@@ -502,3 +502,10 @@ if(TARGET simdutf-nostdlibcxx AND NOT SIMDUTF_SANITIZE AND NOT SIMDUTF_SANITIZE_
   target_link_options(nostdlibcxx_c_api_test PRIVATE -nostdlib++)
   add_test(NAME nostdlibcxx_c_api_test COMMAND nostdlibcxx_c_api_test)
 endif()
+
+if(TARGET simdutf-nolibc AND NOT SIMDUTF_SANITIZE AND NOT SIMDUTF_SANITIZE_UNDEFINED AND NOT SIMDUTF_SANITIZE_THREAD)
+  add_executable(nolibc_c_api_test nostdlibcxx_c_api_test.c)
+  target_link_libraries(nolibc_c_api_test PRIVATE simdutf-nolibc)
+  target_link_options(nolibc_c_api_test PRIVATE -nostdlib++)
+  add_test(NAME nolibc_c_api_test COMMAND nolibc_c_api_test)
+endif()

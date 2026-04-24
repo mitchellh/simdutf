@@ -33,7 +33,13 @@ simdutf_really_inline const char *find(const char *start, const char *end,
       return start + index;
     }
   }
-  return std::find(start, end, character);
+  // Scalar tail — avoids std::find which may call memchr internally.
+  for (; start < end; ++start) {
+    if (*start == character) {
+      return start;
+    }
+  }
+  return end;
 }
 
 simdutf_really_inline const char16_t *
@@ -66,7 +72,13 @@ find(const char16_t *start, const char16_t *end, char16_t character) noexcept {
       return start + index;
     }
   }
-  return std::find(start, end, character);
+  // Scalar tail — avoids std::find which may call memchr internally.
+  for (; start < end; ++start) {
+    if (*start == character) {
+      return start;
+    }
+  }
+  return end;
 }
 
 } // namespace util

@@ -25,9 +25,9 @@ simdutf_constexpr23 simdutf_warn_unused bool validate(BytePtr data,
       if (next_pos <= len) { // if it is safe to read 16 more bytes, check
                              // that they are ascii
         uint64_t v1{};
-        std::memcpy(&v1, data + pos, sizeof(uint64_t));
+        simdutf::internal::memcpy(&v1, data + pos, sizeof(uint64_t));
         uint64_t v2{};
-        std::memcpy(&v2, data + pos + sizeof(uint64_t), sizeof(uint64_t));
+        simdutf::internal::memcpy(&v2, data + pos + sizeof(uint64_t), sizeof(uint64_t));
         uint64_t v{v1 | v2};
         if ((v & 0x8080808080808080) == 0) {
           pos = next_pos;
@@ -126,9 +126,9 @@ validate_with_errors(BytePtr data, size_t len) noexcept {
     if (next_pos <=
         len) { // if it is safe to read 16 more bytes, check that they are ascii
       uint64_t v1;
-      std::memcpy(&v1, data + pos, sizeof(uint64_t));
+      simdutf::internal::memcpy(&v1, data + pos, sizeof(uint64_t));
       uint64_t v2;
-      std::memcpy(&v2, data + pos + sizeof(uint64_t), sizeof(uint64_t));
+      simdutf::internal::memcpy(&v2, data + pos + sizeof(uint64_t), sizeof(uint64_t));
       uint64_t v{v1 | v2};
       if ((v & 0x8080808080808080) == 0) {
         pos = next_pos;

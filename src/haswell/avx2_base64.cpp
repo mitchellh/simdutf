@@ -370,7 +370,7 @@ avx2_encode_base64_impl(char *dst, const char *src, size_t srclen,
         if (offset + 32 > line_length) {
           size_t location_end = line_length - offset;
           size_t to_move = 32 - location_end;
-          std::memmove(out + location_end + 1, out + location_end, to_move);
+          simdutf::internal::memmove(out + location_end + 1, out + location_end, to_move);
           out[location_end] = '\n';
           offset = to_move;
           out += 32 + 1;
@@ -383,7 +383,7 @@ avx2_encode_base64_impl(char *dst, const char *src, size_t srclen,
         alignas(32) uint8_t buffer[32];
         _mm256_storeu_si256(reinterpret_cast<__m256i *>(buffer),
                             lookup_pshufb_improved<isbase64url>(indices));
-        std::memcpy(out, buffer, 32);
+        simdutf::internal::memcpy(out, buffer, 32);
         size_t out_pos = 0;
         size_t local_offset = offset;
         for (size_t j = 0; j < 32;) {
@@ -493,7 +493,7 @@ simdutf_really_inline void base64_decode_block_safe(char *out,
   alignas(32) char buffer[32]; // We enforce safety with a buffer.
   base64_decode(
       buffer, _mm256_loadu_si256(reinterpret_cast<const __m256i *>(src + 32)));
-  std::memcpy(out + 24, buffer, 24);
+  simdutf::internal::memcpy(out + 24, buffer, 24);
 }
 
 // --- decoding - base64 class --------------------------------
@@ -544,7 +544,7 @@ public:
     base64_decode(out, chunks[0]);
     alignas(32) char buffer[32]; // We enforce safety with a buffer.
     base64_decode(buffer, chunks[1]);
-    std::memcpy(out + 24, buffer, 24);
+    simdutf::internal::memcpy(out + 24, buffer, 24);
   }
 
   template <bool base64_url, bool ignore_garbage, bool default_or_url>

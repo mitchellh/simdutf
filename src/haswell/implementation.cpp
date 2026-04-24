@@ -206,7 +206,7 @@ implementation::detect_encodings(const char *input,
 
   uint8_t block[64]{};
   size_t idx = reader.block_index();
-  std::memcpy(block, &input[idx], length - idx);
+  simdutf::internal::memcpy(block, &input[idx], length - idx);
   simd::simd8x64<uint8_t> in(block);
   c.check_next_input(in);
 

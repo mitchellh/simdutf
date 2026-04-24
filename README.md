@@ -3010,6 +3010,39 @@ When `SIMDUTF_NO_LIBCXX` is active:
 - `SIMDUTF_USE_STATIC_INITIALIZATION` is automatically set to `1` (see the section on [SIMDUTF\_USE\_STATIC\_INITIALIZATION](#simdutf_use_static_initialization)), since thread-safe function-local statics depend on the standard library. Importantly, it means that you should be careful if you are using the simdutf library in a static context (before the `main()` function is called).
 - Weak stub implementations of `__cxa_pure_virtual` and `__glibcxx_assert_fail` are compiled in so that the abstract-class vtable machinery does not pull in libstdc++/libc++abi. A real definition from the runtime will take priority if one is linked in.
 
+## Compiling without libc symbols
+
+If you also need the simdutf library itself to avoid requiring libc symbols such as `memcpy`, `memmove`, `memcmp`, `memset`, `strlen`, or `getenv`, you can additionally set `SIMDUTF_NO_LIBC` to `1` and compile with stack protectors disabled.
+
+```
+c++ -c simdutf.cpp -nostdlib++ -fno-rtti -fno-exceptions -fno-stack-protector -DSIMDUTF_NO_LIBCXX=1 -DSIMDUTF_NO_LIBC=1 -std=c++17
+```
+
+When `SIMDUTF_NO_LIBC` is active:
+
+- simdutf uses internal byte-oriented implementations for `memcpy`, `memmove`, `memset`, `memcmp`, and `strlen` by default.
+- `SIMDUTF_FORCE_IMPLEMENTATION` is ignored unless you also provide an external `getenv` hook.
+- You may override any internal helper with an external symbol by defining one or more of `SIMDUTF_LIBC_MEMCPY`, `SIMDUTF_LIBC_MEMMOVE`, `SIMDUTF_LIBC_MEMSET`, `SIMDUTF_LIBC_MEMCMP`, `SIMDUTF_LIBC_STRLEN`, or `SIMDUTF_LIBC_GETENV` to the names of external C symbols before compiling simdutf.
+
+For example, if your environment already provides freestanding replacements, you can do the following.
+
+```c
+extern "C" void *my_memcpy(void *, const void *, size_t) noexcept;
+extern "C" void *my_memmove(void *, const void *, size_t) noexcept;
+extern "C" void *my_memset(void *, int, size_t) noexcept;
+extern "C" int my_memcmp(const void *, const void *, size_t) noexcept;
+extern "C" size_t my_strlen(const char *) noexcept;
+extern "C" const char *my_getenv(const char *) noexcept;
+```
+
+```shell
+c++ -c simdutf.cpp -nostdlib++ -fno-rtti -fno-exceptions -fno-stack-protector \
+  -DSIMDUTF_NO_LIBCXX=1 -DSIMDUTF_NO_LIBC=1 \
+  -DSIMDUTF_LIBC_MEMCPY=my_memcpy -DSIMDUTF_LIBC_MEMMOVE=my_memmove \
+  -DSIMDUTF_LIBC_MEMSET=my_memset -DSIMDUTF_LIBC_MEMCMP=my_memcmp \
+  -DSIMDUTF_LIBC_STRLEN=my_strlen -DSIMDUTF_LIBC_GETENV=my_getenv -std=c++17
+```
+
 
 ## C API (C11 or better)
 

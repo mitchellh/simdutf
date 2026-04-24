@@ -23,7 +23,7 @@ simdutf_constexpr23 size_t convert_valid(InputPtr data, size_t len,
       if (pos + 8 <= len) { // if it is safe to read 8 more bytes, check that
                             // they are ascii
         uint64_t v;
-        ::memcpy(&v, data + pos, sizeof(uint64_t));
+        simdutf::internal::memcpy(&v, data + pos, sizeof(uint64_t));
         if ((v & 0x8080808080808080) == 0) {
           size_t final_pos = pos + 8;
           while (pos < final_pos) {

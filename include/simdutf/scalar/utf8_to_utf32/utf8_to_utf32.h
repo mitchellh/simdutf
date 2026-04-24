@@ -23,9 +23,9 @@ simdutf_constexpr23 size_t convert(InputPtr data, size_t len,
       if (pos + 16 <= len) { // if it is safe to read 16 more bytes, check that
                              // they are ascii
         uint64_t v1;
-        ::memcpy(&v1, data + pos, sizeof(uint64_t));
+        simdutf::internal::memcpy(&v1, data + pos, sizeof(uint64_t));
         uint64_t v2;
-        ::memcpy(&v2, data + pos + sizeof(uint64_t), sizeof(uint64_t));
+        simdutf::internal::memcpy(&v2, data + pos + sizeof(uint64_t), sizeof(uint64_t));
         uint64_t v{v1 | v2};
         if ((v & 0x8080808080808080) == 0) {
           size_t final_pos = pos + 16;
@@ -129,9 +129,9 @@ simdutf_constexpr23 result convert_with_errors(InputPtr data, size_t len,
       if (pos + 16 <= len) { // if it is safe to read 16 more bytes, check that
                              // they are ascii
         uint64_t v1;
-        ::memcpy(&v1, data + pos, sizeof(uint64_t));
+        simdutf::internal::memcpy(&v1, data + pos, sizeof(uint64_t));
         uint64_t v2;
-        ::memcpy(&v2, data + pos + sizeof(uint64_t), sizeof(uint64_t));
+        simdutf::internal::memcpy(&v2, data + pos + sizeof(uint64_t), sizeof(uint64_t));
         uint64_t v{v1 | v2};
         if ((v & 0x8080808080808080) == 0) {
           size_t final_pos = pos + 16;

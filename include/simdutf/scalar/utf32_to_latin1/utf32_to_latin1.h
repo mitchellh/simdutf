@@ -38,7 +38,7 @@ inline simdutf_constexpr23 result convert_with_errors(const char32_t *data,
       if (pos + 2 <= len) { // if it is safe to read 8 more bytes, check that
                             // they are Latin1
         uint64_t v;
-        ::memcpy(&v, data + pos, sizeof(uint64_t));
+        simdutf::internal::memcpy(&v, data + pos, sizeof(uint64_t));
         if ((v & 0xFFFFFF00FFFFFF00) == 0) {
           *latin1_output++ = char(data[pos]);
           *latin1_output++ = char(data[pos + 1]);

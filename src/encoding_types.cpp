@@ -3,19 +3,23 @@ namespace simdutf {
 std::string_view to_string(encoding_type bom) {
   switch (bom) {
   case UTF16_LE:
-    return "UTF16 little-endian";
+    return std::string_view("UTF16 little-endian",
+                            sizeof("UTF16 little-endian") - 1);
   case UTF16_BE:
-    return "UTF16 big-endian";
+    return std::string_view("UTF16 big-endian",
+                            sizeof("UTF16 big-endian") - 1);
   case UTF32_LE:
-    return "UTF32 little-endian";
+    return std::string_view("UTF32 little-endian",
+                            sizeof("UTF32 little-endian") - 1);
   case UTF32_BE:
-    return "UTF32 big-endian";
+    return std::string_view("UTF32 big-endian",
+                            sizeof("UTF32 big-endian") - 1);
   case UTF8:
-    return "UTF8";
+    return std::string_view("UTF8", sizeof("UTF8") - 1);
   case unspecified:
-    return "unknown";
+    return std::string_view("unknown", sizeof("unknown") - 1);
   default:
-    return "error";
+    return std::string_view("error", sizeof("error") - 1);
   }
 }
 

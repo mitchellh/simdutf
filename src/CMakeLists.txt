@@ -101,6 +101,7 @@ include(CheckLinkerFlag)
 
 check_cxx_compiler_flag("-fno-exceptions" HAVE_CXX_FLAG_NO_EXCEPTIONS)
 check_cxx_compiler_flag("-fno-rtti" HAVE_CXX_FLAG_NO_RTTI)
+check_cxx_compiler_flag("-fno-stack-protector" HAVE_CXX_FLAG_NO_STACK_PROTECTOR)
 check_linker_flag(CXX "-nostdlib++" HAVE_CXX_LINKER_FLAG_NO_STDLIBXX)
 
 ##
@@ -118,6 +119,24 @@ if(HAVE_CXX_FLAG_NO_EXCEPTIONS AND HAVE_CXX_FLAG_NO_RTTI AND HAVE_CXX_LINKER_FLA
   target_compile_options(simdutf-nostdlibcxx PRIVATE
     -fno-exceptions -fno-rtti)
   set_target_properties(simdutf-nostdlibcxx PROPERTIES POSITION_INDEPENDENT_CODE ON)
+endif()
+
+##
+## simdutf-nolibc: a variant of the library that does not require libc++ or
+## libc symbols. Memory helpers are implemented internally by default, and
+## optional environment access can be wired in with SIMDUTF_LIBC_GETENV.
+if(HAVE_CXX_FLAG_NO_EXCEPTIONS AND HAVE_CXX_FLAG_NO_RTTI AND HAVE_CXX_LINKER_FLAG_NO_STDLIBXX AND HAVE_CXX_FLAG_NO_STACK_PROTECTOR)
+  add_library(simdutf-nolibc STATIC simdutf.cpp)
+  target_include_directories(simdutf-nolibc PRIVATE
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)
+  target_include_directories(simdutf-nolibc PUBLIC
+    "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>")
+  target_compile_definitions(simdutf-nolibc PRIVATE
+    SIMDUTF_NO_LIBCXX=1
+    SIMDUTF_NO_LIBC=1)
+  target_compile_options(simdutf-nolibc PRIVATE
+    -fno-exceptions -fno-rtti -fno-stack-protector -fno-builtin)
+  set_target_properties(simdutf-nolibc PROPERTIES POSITION_INDEPENDENT_CODE ON)
 endif()
 
 if(SIMDUTF_SANITIZE)

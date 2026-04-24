@@ -26,9 +26,9 @@ simdutf_constexpr23 size_t convert(InputPtr data, size_t len,
       if (pos + 16 <= len) { // if it is safe to read 16 more bytes, check that
                              // they are ascii
         uint64_t v1;
-        ::memcpy(&v1, data + pos, sizeof(uint64_t));
+        simdutf::internal::memcpy(&v1, data + pos, sizeof(uint64_t));
         uint64_t v2;
-        ::memcpy(&v2, data + pos + sizeof(uint64_t), sizeof(uint64_t));
+        simdutf::internal::memcpy(&v2, data + pos + sizeof(uint64_t), sizeof(uint64_t));
         uint64_t v{v1 |
                    v2}; // We are only interested in these bits: 1000 1000 1000
                         // 1000, so it makes sense to concatenate everything
@@ -78,16 +78,16 @@ inline size_t convert_safe(const char *buf, size_t len, char *utf8_output,
         utf8_pos + 16 <= utf8_len) { // if it is safe to read 16 more bytes,
                                      // check that they are ascii
       uint64_t v1;
-      ::memcpy(&v1, data + pos, sizeof(uint64_t));
+      simdutf::internal::memcpy(&v1, data + pos, sizeof(uint64_t));
       uint64_t v2;
-      ::memcpy(&v2, data + pos + sizeof(uint64_t), sizeof(uint64_t));
+      simdutf::internal::memcpy(&v2, data + pos + sizeof(uint64_t), sizeof(uint64_t));
       uint64_t v{v1 |
                  v2}; // We are only interested in these bits: 1000 1000 1000
                       // 1000, so it makes sense to concatenate everything
       if ((v & 0x8080808080808080) ==
           0) { // if NONE of these are set, e.g. all of them are zero, then
                // everything is ASCII
-        ::memcpy(utf8_output + utf8_pos, buf + pos, 16);
+        simdutf::internal::memcpy(utf8_output + utf8_pos, buf + pos, 16);
         utf8_pos += 16;
         pos += 16;
       } else {
@@ -162,18 +162,18 @@ utf8_length_from_latin1(InputPtr input, size_t length) noexcept {
     };
     for (; i + 32 <= length; i += 32) {
       uint64_t v;
-      memcpy(&v, input + i, 8);
+      simdutf::internal::memcpy(&v, input + i, 8);
       answer += pop(v);
-      memcpy(&v, input + i + 8, sizeof(v));
+      simdutf::internal::memcpy(&v, input + i + 8, sizeof(v));
       answer += pop(v);
-      memcpy(&v, input + i + 16, sizeof(v));
+      simdutf::internal::memcpy(&v, input + i + 16, sizeof(v));
       answer += pop(v);
-      memcpy(&v, input + i + 24, sizeof(v));
+      simdutf::internal::memcpy(&v, input + i + 24, sizeof(v));
       answer += pop(v);
     }
     for (; i + 8 <= length; i += 8) {
       uint64_t v;
-      memcpy(&v, input + i, sizeof(v));
+      simdutf::internal::memcpy(&v, input + i, sizeof(v));
       answer += pop(v);
     }
   } // !consteval scope

@@ -131,6 +131,8 @@
   #define simdutf_constexpr23
 #endif
 
+#include "simdutf/libc.h"
+
 #ifndef SIMDUTF_DLLIMPORTEXPORT
   #if defined(SIMDUTF_VISUAL_STUDIO) // Visual Studio
                                      /**

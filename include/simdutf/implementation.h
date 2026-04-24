@@ -4180,37 +4180,45 @@ namespace simdutf {
 inline std::string_view to_string(base64_options options) {
   switch (options) {
   case base64_default:
-    return "base64_default";
+    return std::string_view("base64_default", sizeof("base64_default") - 1);
   case base64_url:
-    return "base64_url";
+    return std::string_view("base64_url", sizeof("base64_url") - 1);
   case base64_reverse_padding:
-    return "base64_reverse_padding";
+    return std::string_view("base64_reverse_padding",
+                            sizeof("base64_reverse_padding") - 1);
   case base64_url_with_padding:
-    return "base64_url_with_padding";
+    return std::string_view("base64_url_with_padding",
+                            sizeof("base64_url_with_padding") - 1);
   case base64_default_accept_garbage:
-    return "base64_default_accept_garbage";
+    return std::string_view("base64_default_accept_garbage",
+                            sizeof("base64_default_accept_garbage") - 1);
   case base64_url_accept_garbage:
-    return "base64_url_accept_garbage";
+    return std::string_view("base64_url_accept_garbage",
+                            sizeof("base64_url_accept_garbage") - 1);
   case base64_default_or_url:
-    return "base64_default_or_url";
+    return std::string_view("base64_default_or_url",
+                            sizeof("base64_default_or_url") - 1);
   case base64_default_or_url_accept_garbage:
-    return "base64_default_or_url_accept_garbage";
+    return std::string_view("base64_default_or_url_accept_garbage",
+                            sizeof("base64_default_or_url_accept_garbage") -
+                                1);
   }
-  return "<unknown>";
+  return std::string_view("<unknown>", sizeof("<unknown>") - 1);
 }
 
 inline std::string_view to_string(last_chunk_handling_options options) {
   switch (options) {
   case loose:
-    return "loose";
+    return std::string_view("loose", sizeof("loose") - 1);
   case strict:
-    return "strict";
+    return std::string_view("strict", sizeof("strict") - 1);
   case stop_before_partial:
-    return "stop_before_partial";
+    return std::string_view("stop_before_partial",
+                            sizeof("stop_before_partial") - 1);
   case only_full_chunks:
-    return "only_full_chunks";
+    return std::string_view("only_full_chunks", sizeof("only_full_chunks") - 1);
   }
-  return "<unknown>";
+  return std::string_view("<unknown>", sizeof("<unknown>") - 1);
 }
 
 /**
@@ -5087,7 +5095,9 @@ public:
    *
    * @return the name of the implementation, e.g. "haswell", "westmere", "arm64"
    */
-  virtual std::string_view name() const noexcept { return _name; }
+  virtual std::string_view name() const noexcept {
+    return std::string_view(_name, _name_length);
+  }
 
   /**
    * The description of this implementation.
@@ -5098,7 +5108,9 @@ public:
    *
    * @return the name of the implementation, e.g. "haswell", "westmere", "arm64"
    */
-  virtual std::string_view description() const noexcept { return _description; }
+  virtual std::string_view description() const noexcept {
+    return std::string_view(_description, _description_length);
+  }
 
   /**
    * The instruction sets this implementation is compiled against
@@ -7014,10 +7026,21 @@ public:
 protected:
   /** @private Construct an implementation with the given name and description.
    * For subclasses. */
+  template <size_t NameLength, size_t DescriptionLength>
+  simdutf_really_inline implementation(
+      const char (&name)[NameLength],
+      const char (&description)[DescriptionLength],
+      uint32_t required_instruction_sets)
+      : _name(name), _name_length(NameLength - 1), _description(description),
+        _description_length(DescriptionLength - 1),
+        _required_instruction_sets(required_instruction_sets) {}
+
   simdutf_really_inline implementation(const char *name,
                                        const char *description,
                                        uint32_t required_instruction_sets)
-      : _name(name), _description(description),
+      : _name(name), _name_length(simdutf::internal::strlen(name)),
+        _description(description),
+        _description_length(simdutf::internal::strlen(description)),
         _required_instruction_sets(required_instruction_sets) {}
 
 protected:
@@ -7028,11 +7051,13 @@ private:
    * The name of this implementation.
    */
   const char *_name;
+  const size_t _name_length;
 
   /**
    * The description of this implementation.
    */
   const char *_description;
+  const size_t _description_length;
 
   /**
    * Instruction sets required for this implementation.
@@ -7042,6 +7067,19 @@ private:
 
 /** @private */
 namespace internal {
+
+simdutf_really_inline bool string_view_equal(std::string_view lhs,
+                                             std::string_view rhs) noexcept {
+  if (lhs.size() != rhs.size()) {
+    return false;
+  }
+  for (size_t i = 0; i < lhs.size(); i++) {
+    if (lhs[i] != rhs[i]) {
+      return false;
+    }
+  }
+  return true;
+}
 
 /**
  * The list of available implementations compiled into simdutf.
@@ -7072,7 +7110,24 @@ public:
    */
   const implementation *operator[](std::string_view name) const noexcept {
     for (const implementation *impl : *this) {
-      if (impl->name() == name) {
+      if (string_view_equal(impl->name(), name)) {
+        return impl;
+      }
+    }
+    return nullptr;
+  }
+
+  const implementation *operator[](const char *name) const noexcept {
+    if (name == nullptr) {
+      return nullptr;
+    }
+    for (const implementation *impl : *this) {
+      const std::string_view impl_name = impl->name();
+      size_t i = 0;
+      while (i < impl_name.size() && name[i] != '\0' && impl_name[i] == name[i]) {
+        i++;
+      }
+      if (i == impl_name.size() && name[i] == '\0') {
         return impl;
       }
     }

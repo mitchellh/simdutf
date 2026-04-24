@@ -40,7 +40,7 @@ inline void memcpy_atomic_read(char *dst, const char *src, size_t len) {
     auto *src_aligned = reinterpret_cast<uint64_t *>(const_cast<char *>(src));
     const auto dst_value =
         std::atomic_ref<uint64_t>(*src_aligned).load(std::memory_order_relaxed);
-    std::memcpy(dst, &dst_value, sizeof(uint64_t));
+    simdutf::internal::memcpy(dst, &dst_value, sizeof(uint64_t));
     src += alignment;
     dst += alignment;
     len -= alignment;
@@ -86,7 +86,7 @@ inline void memcpy_atomic_write(char *dst, const char *src, size_t len) {
   while (len >= alignment) {
     auto *dst_aligned = reinterpret_cast<uint64_t *>(dst);
     uint64_t src_val;
-    std::memcpy(&src_val, src, sizeof(uint64_t)); // Non-atomic read from src
+    simdutf::internal::memcpy(&src_val, src, sizeof(uint64_t)); // Non-atomic read from src
     std::atomic_ref<uint64_t>(*dst_aligned)
         .store(src_val, std::memory_order_relaxed);
     dst += alignment;

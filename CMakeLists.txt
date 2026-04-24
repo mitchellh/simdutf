@@ -221,6 +221,13 @@ if(SIMDUTF_TESTS AND NOT SIMDUTF_SANITIZE)
       COMMAND sh -c "${NM}  $<TARGET_FILE_NAME:simdutf> |  ${GREP} stderr || exit 0 && exit 1"
       WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
     )
+    if(TARGET simdutf-nolibc)
+      add_test(
+        NAME "nolibc_symbol_audit"
+        COMMAND sh -c "${NM} -u $<TARGET_FILE_NAME:simdutf-nolibc> | ${GREP} -E '(^|[[:space:]])(_+)?(getenv|memcmp|memcpy|memmove|memset|strlen)$|stack_chk' && exit 1 || exit 0"
+        WORKING_DIRECTORY ${PROJECT_BINARY_DIR}/src
+      )
+    endif()
   endif()
 endif()
 

@@ -58,11 +58,11 @@ size_t convert_masked_utf8_to_latin1(const char *input,
 #if defined(__clang__)
   __attribute__((aligned(16))) char buf[16];
   latin1_packed.store(buf);
-  memcpy(latin1_output, buf, 6);
+  simdutf::internal::memcpy(latin1_output, buf, 6);
 #else
   // writing 8 bytes even though we only care about the first 6 bytes.
   const auto tmp = vec_u64_t(latin1_packed.value);
-  memcpy(latin1_output, &tmp[0], 8);
+  simdutf::internal::memcpy(latin1_output, &tmp[0], 8);
 #endif
   latin1_output += 6; // We wrote 6 bytes.
   return consumed;
